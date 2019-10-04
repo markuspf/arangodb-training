@@ -71,7 +71,8 @@ As an example the ~_statistics~ collection exists in a cluster as a collection (
   
   The follwoing steps are performed to create a database with name ~$name~.
   - write a database entry in ~arangod/Plan/Databases/$name~ , which is a json object of the form
-#+BEGIN-SRC
+    
+#+BEGIN_SRC json
 { 
 "isBuilding": true,
 "id": 123,
@@ -79,7 +80,8 @@ As an example the ~_statistics~ collection exists in a cluster as a collection (
 "coordinator": $UUID-OF-COORDINATOR,
 "coordinatorRebootId": $REBOOTID-OF-COORDINATOR
 }
-#+END-SRC
+#+END_SRC
+
     This triggers creation of database entities on DBServers
   - Wait for all DBServers to report successful creation of DBServer level databases (by observing that all known DBServers confirm in ~Current~ that they have a database of this name
   - Create all system collections, and their indices, on the newly created databases. Wait for success to be reported, this is done using an Upgrade process.
