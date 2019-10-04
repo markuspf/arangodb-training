@@ -3,10 +3,10 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2019-10-04 Fri 15:52 -->
+<!-- 2019-10-04 Fri 16:01 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Description of core conecepts of ArangoDB</title>
+<title>Description of core concepts of ArangoDB</title>
 <meta name="generator" content="Org mode" />
 <style type="text/css">
  <!--/*--><![CDATA[/*><!--*/
@@ -241,44 +241,46 @@ for the JavaScript code in this tag.
 </head>
 <body>
 <div id="content">
-<h1 class="title">Description of core conecepts of ArangoDB</h1>
+<h1 class="title">Description of core concepts of ArangoDB</h1>
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org2850b05">1. Vocabulary</a>
+<li><a href="#org22c2613">1. Vocabulary</a>
 <ul>
-<li><a href="#org97bed20">1.1. Document</a></li>
-<li><a href="#orge66d826">1.2. Collection</a></li>
-<li><a href="#orgcb00b23">1.3. Database</a>
+<li><a href="#orga033714">1.1. Document</a></li>
+<li><a href="#org38a53ad">1.2. Collection</a></li>
+<li><a href="#org4abfb2d">1.3. Database</a>
 <ul>
-<li><a href="#orgc21f1fb">1.3.1. System collections</a></li>
+<li><a href="#org0737153">1.3.1. System collections</a></li>
 </ul>
 </li>
-<li><a href="#orgdb7b238">1.4. Cluster</a></li>
-<li><a href="#org4631f81">1.5. Entities (Databases, Collections, Documents) can exist on different levels in ArangoDB:</a></li>
-</ul>
-</li>
-<li><a href="#org5a53ac6">2. Agency</a>
+<li><a href="#org5f8e078">1.4. Cluster</a>
 <ul>
-<li><a href="#org2c099cd">2.1. Important Agency Paths</a></li>
+<li><a href="#org7c1ba0e">1.4.1. Important Agency Paths</a></li>
 </ul>
 </li>
-<li><a href="#orgc72271e">3. Database</a></li>
-<li><a href="#orgcec237f">4. Database Creation (Single Server)</a></li>
-<li><a href="#orgeca05be">5. Database Creation (Cluster)</a></li>
-<li><a href="#org9d17c97">6. Collection Creation (Cluster)</a></li>
-<li><a href="#orgef9f9e2">7. Index Creation (Cluster)</a></li>
+<li><a href="#org700327e">1.5. Entities (Databases, Collections, Documents) can exist on different levels in ArangoDB:</a></li>
+</ul>
+</li>
+<li><a href="#org167f90a">2. Agency</a></li>
+<li><a href="#org45f8e1d">3. Coordinator</a></li>
+<li><a href="#org990e635">4. DBServers</a></li>
+<li><a href="#orgf53d70b">5. Database</a></li>
+<li><a href="#org9056af6">6. Database Creation (Single Server)</a></li>
+<li><a href="#orgb8fafcc">7. Database Creation (Cluster)</a></li>
+<li><a href="#org71618c3">8. Collection Creation (Cluster)</a></li>
+<li><a href="#org8cdea4d">9. Index Creation (Cluster)</a></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org2850b05" class="outline-2">
-<h2 id="org2850b05"><span class="section-number-2">1</span> Vocabulary</h2>
+<div id="outline-container-org22c2613" class="outline-2">
+<h2 id="org22c2613"><span class="section-number-2">1</span> Vocabulary</h2>
 <div class="outline-text-2" id="text-1">
 </div>
-<div id="outline-container-org97bed20" class="outline-3">
-<h3 id="org97bed20"><span class="section-number-3">1.1</span> Document</h3>
+<div id="outline-container-orga033714" class="outline-3">
+<h3 id="orga033714"><span class="section-number-3">1.1</span> Document</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
 A json object.
@@ -286,8 +288,8 @@ A json object.
 </div>
 </div>
 
-<div id="outline-container-orge66d826" class="outline-3">
-<h3 id="orge66d826"><span class="section-number-3">1.2</span> Collection</h3>
+<div id="outline-container-org38a53ad" class="outline-3">
+<h3 id="org38a53ad"><span class="section-number-3">1.2</span> Collection</h3>
 <div class="outline-text-3" id="text-1-2">
 <p>
 A collection of documents. Can have indexes.
@@ -295,8 +297,8 @@ A collection of documents. Can have indexes.
 </div>
 </div>
 
-<div id="outline-container-orgcb00b23" class="outline-3">
-<h3 id="orgcb00b23"><span class="section-number-3">1.3</span> Database</h3>
+<div id="outline-container-org4abfb2d" class="outline-3">
+<h3 id="org4abfb2d"><span class="section-number-3">1.3</span> Database</h3>
 <div class="outline-text-3" id="text-1-3">
 <p>
 A database is a collection of collections (yes).
@@ -307,8 +309,8 @@ A database contains some collections which are system collections. System collec
 </p>
 </div>
 
-<div id="outline-container-orgc21f1fb" class="outline-4">
-<h4 id="orgc21f1fb"><span class="section-number-4">1.3.1</span> System collections</h4>
+<div id="outline-container-org0737153" class="outline-4">
+<h4 id="org0737153"><span class="section-number-4">1.3.1</span> System collections</h4>
 <div class="outline-text-4" id="text-1-3-1">
 <p>
 The following system collections are created on database creation at the time of this writing.
@@ -323,19 +325,41 @@ The following system collections are created on database creation at the time of
 </div>
 </div>
 
-<div id="outline-container-orgdb7b238" class="outline-3">
-<h3 id="orgdb7b238"><span class="section-number-3">1.4</span> Cluster</h3>
+<div id="outline-container-org5f8e078" class="outline-3">
+<h3 id="org5f8e078"><span class="section-number-3">1.4</span> Cluster</h3>
 <div class="outline-text-3" id="text-1-4">
 <ul class="org-ul">
 <li>Agency</li>
+</ul>
+<p>
+The <i>agency</i> in an ArangoDB cluster is a collection of an odd number of <i>agents</i> forming a consensus-based resilient store of a JSON document (sometimes also referred to as "the agency").
+An ArangoDB agency uses the <a href="https://raft.github.io">RAFT</a> consensus protocol. This setup ensures that we can lose up to one less than half of the agents and still have a functioning and consistent agency.
+</p>
+
+<p>
+Entities within the Agency are accessed through paths; some important paths are
+</p>
+</div>
+
+<div id="outline-container-org7c1ba0e" class="outline-4">
+<h4 id="org7c1ba0e"><span class="section-number-4">1.4.1</span> Important Agency Paths</h4>
+<div class="outline-text-4" id="text-1-4-1">
+<ul class="org-ul">
+<li>arango/Plan</li>
+<li>arango/Current</li>
+</ul>
+
+
+<ul class="org-ul">
 <li>Coordinator</li>
 <li>DBServer</li>
 </ul>
 </div>
 </div>
+</div>
 
-<div id="outline-container-org4631f81" class="outline-3">
-<h3 id="org4631f81"><span class="section-number-3">1.5</span> Entities (Databases, Collections, Documents) can exist on different levels in ArangoDB:</h3>
+<div id="outline-container-org700327e" class="outline-3">
+<h3 id="org700327e"><span class="section-number-3">1.5</span> Entities (Databases, Collections, Documents) can exist on different levels in ArangoDB:</h3>
 <div class="outline-text-3" id="text-1-5">
 <ul class="org-ul">
 <li>Server Level</li>
@@ -354,66 +378,50 @@ and their visibility varies on Coordinator, DBServer, Agency
 <li>Something that exists on DBServer level does not need to exist on Cluster Level, Agency is completely different</li>
 
 <li>A <b>database</b> that exists on Cluster level is backed by exactly one database on <b>each</b> DBserver (what happens if we add a DBServer?)</li>
-<li>A <b>collection</b> that exists on Cluster level is backed by a number of shards which are represented by "ordinary" collections on the DBServer level</li>
+<li>A <b>collection</b> that exists on Cluster level is backed by a number of <b>shards</b> which are "ordinary" collections on the DBServer level</li>
 <li><b>index</b> exists for shard on every server ?</li>
 </ul>
 
 <p>
-As an example the `<sub>statistics</sub>` collection exists in the cluster as a collection (backed by shards on DBServers) and as a collection on each `DBServer` 
-</p>
-
-<p>
-(TODO: Coordinator _statistics?)
+As an example the <code>_statistics</code> collection exists in the cluster as a collection (backed by shards on DBServers) and as a collection on each <code>DBServer</code> 
 </p>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org5a53ac6" class="outline-2">
-<h2 id="org5a53ac6"><span class="section-number-2">2</span> Agency</h2>
-<div class="outline-text-2" id="text-2">
-<p>
-The <i>agency</i> in an ArangoDB cluster is a collection of an odd number of <i>agents</i> forming a consensus-based resilient store of a JSON document (sometimes also referred to as "the agency").
-An ArangoDB agency uses the <a href="https://raft.github.io">RAFT</a> consensus protocol. This setup ensures that we can lose up to one less than half of the agents and still have a functioning and consistent agency.
-</p>
-
-<p>
-Entities within the Agency are accessed through paths; some important paths are
-</p>
+<div id="outline-container-org167f90a" class="outline-2">
+<h2 id="org167f90a"><span class="section-number-2">2</span> Agency</h2>
 </div>
 
-<div id="outline-container-org2c099cd" class="outline-3">
-<h3 id="org2c099cd"><span class="section-number-3">2.1</span> Important Agency Paths</h3>
-<div class="outline-text-3" id="text-2-1">
-<ul class="org-ul">
-<li>arango/Plan</li>
-<li>arango/Current</li>
-</ul>
-</div>
-</div>
+<div id="outline-container-org45f8e1d" class="outline-2">
+<h2 id="org45f8e1d"><span class="section-number-2">3</span> Coordinator</h2>
 </div>
 
-<div id="outline-container-orgc72271e" class="outline-2">
-<h2 id="orgc72271e"><span class="section-number-2">3</span> Database</h2>
-<div class="outline-text-2" id="text-3">
+<div id="outline-container-org990e635" class="outline-2">
+<h2 id="org990e635"><span class="section-number-2">4</span> DBServers</h2>
+</div>
+
+<div id="outline-container-orgf53d70b" class="outline-2">
+<h2 id="orgf53d70b"><span class="section-number-2">5</span> Database</h2>
+<div class="outline-text-2" id="text-5">
 <p>
 A database is an entity together with a number of "system collections"
 </p>
 </div>
 </div>
 
-<div id="outline-container-orgcec237f" class="outline-2">
-<h2 id="orgcec237f"><span class="section-number-2">4</span> Database Creation (Single Server)</h2>
-<div class="outline-text-2" id="text-4">
+<div id="outline-container-org9056af6" class="outline-2">
+<h2 id="org9056af6"><span class="section-number-2">6</span> Database Creation (Single Server)</h2>
+<div class="outline-text-2" id="text-6">
 <p>
-TBD
+If a database is created on a single server it is backed by storage in the filesystem of the host. Databases on a DBServer in a cluster are just databases like on a single server.
 </p>
 </div>
 </div>
 
-<div id="outline-container-orgeca05be" class="outline-2">
-<h2 id="orgeca05be"><span class="section-number-2">5</span> Database Creation (Cluster)</h2>
-<div class="outline-text-2" id="text-5">
+<div id="outline-container-orgb8fafcc" class="outline-2">
+<h2 id="orgb8fafcc"><span class="section-number-2">7</span> Database Creation (Cluster)</h2>
+<div class="outline-text-2" id="text-7">
 <p>
 Database creation (on Cluster Level) is performed by a coordinator on behalf of a user.
 </p>
@@ -433,9 +441,9 @@ Database creation proceeds in multiple steps and is atomic in the sense that a d
 </div>
 </div>
 
-<div id="outline-container-org9d17c97" class="outline-2">
-<h2 id="org9d17c97"><span class="section-number-2">6</span> Collection Creation (Cluster)</h2>
-<div class="outline-text-2" id="text-6">
+<div id="outline-container-org71618c3" class="outline-2">
+<h2 id="org71618c3"><span class="section-number-2">8</span> Collection Creation (Cluster)</h2>
+<div class="outline-text-2" id="text-8">
 <ul class="org-ul">
 <li>create an entry in Plan for the collection, `isBuilding: true`</li>
 <li>wait for creation of all shards to succeed (what about followers?)</li>
@@ -454,9 +462,9 @@ Collections can be created in "bulk" which complicates the process.
 </div>
 </div>
 
-<div id="outline-container-orgef9f9e2" class="outline-2">
-<h2 id="orgef9f9e2"><span class="section-number-2">7</span> Index Creation (Cluster)</h2>
-<div class="outline-text-2" id="text-7">
+<div id="outline-container-org8cdea4d" class="outline-2">
+<h2 id="org8cdea4d"><span class="section-number-2">9</span> Index Creation (Cluster)</h2>
+<div class="outline-text-2" id="text-9">
 <p>
 Foreground/Background
 </p>
@@ -469,7 +477,7 @@ Foreground/Background
 </div>
 </div>
 <div id="postamble" class="status">
-<p class="date">Created: 2019-10-04 Fri 15:52</p>
+<p class="date">Created: 2019-10-04 Fri 16:01</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

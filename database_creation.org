@@ -6,6 +6,9 @@
 
 ** Collection
   A collection of documents. Can have indexes.
+  
+** Index
+   TBD
 
 ** Database
   A database is a collection of collections (yes).
@@ -20,60 +23,80 @@
     - ~_analyzers~
     - ~_statistics~
       
+** Single Server
+   
+   In Single Server mode ArangoDB runs as a single (multi-threaded) process.
+   
 ** Cluster
-   - Agency
-   - Coordinator
-   - DBServer
+*** Agency
+    The /agency/ in an ArangoDB cluster is a collection of an odd number of /agents/ forming a consensus-based resilient store of a JSON document (sometimes also referred to as "the agency").
+    An ArangoDB agency uses the [[https://raft.github.io][RAFT]] consensus protocol. This setup ensures that we can lose up to one less than half of the agents and still have a functioning and consistent agency.
 
-** Entities (Databases, Collections, Documents) can exist on different levels in ArangoDB:
-   - Server Level
-   - Cluster Level
+   Entities within the Agency are accessed through paths; some important paths are
+  
+**** Important Agency Paths
+   - ~arango/Plan~ contains the /intended state/ of the cluster; Coordinators write to these paths to request creation or updates of entities.
+   - ~arango/Current~ contains the /current state/ of the clusterl; DBServers write here to reflect their current state.
+      
+*** Coordinator
+    A coordinator (of which there can be as many configured as required) is the gateway between client applications and the agency. It coordinates creation of databases, collections, and indices, queries, etc.
+    
+*** DBServer
+    A DBServer in a cluster is responsible for storing data. Its role in the cluster is controlled by reading ~arango/Plan~ (THE PLAN) from the agency. Coordinators contact DBServers when executing queries.
+
+    
+
+    
+* Cluster 
+  Entities such as Databases, Collections, Documents exist on different levels in an ArangoDB Cluster, namely at ~Server Level~, and at
+  ~Cluster Level~.
    
-(look up whether databases can exist on DBServer level, but not be Cluster level DBs?)
+   (TODO: look up whether databases can exist on DBServer level, but not be Cluster level DBs, and their visibility varies on Coordinator, DBServer, Agency)
 
-and their visibility varies on Coordinator, DBServer, Agency
-
- - Something that exists on DBServer level does not need to exist on Cluster Level, Agency is completely different
+  An entity that exists at ~DBServer~ level does not need to exist at Cluster Level. Note that the Agency is completely separate, even if it runs as an ArangoDB process.
  
- - A *database* that exists on Cluster level is backed by exactly one database on *each* DBserver (what happens if we add a DBServer?)
- - A *collection* that exists on Cluster level is backed by a number of *shards* which are "ordinary" collections on the DBServer level
- - *index* exists for shard on every server ?
+ - A *database* at cluster level is backed by exactly one database on *each* DBserver.
+ - A *collection* at cluster level is backed by a number of *shards* on DBServers, which are "ordinary" collections at DBServer level
+ - (TODO: How do indices behave?) An *index* exists for shard on every server
    
-As an example the ~_statistics~ collection exists in the cluster as a collection (backed by shards on DBServers) and as a collection on each ~DBServer~ 
+As an example the ~_statistics~ collection exists in a cluster as a collection (backed by shards on DBServers) and as a collection on each ~DBServer~. These have nothing to do with each other. The cluster level collection collects cluster statistics, the DBServer level collection collects statistics for this particular DBServer.
 
-* Agency
-  The /agency/ in an ArangoDB cluster is a collection of an odd number of /agents/ forming a consensus-based resilient store of a JSON document (sometimes also referred to as "the agency").
-  An ArangoDB agency uses the [[https://raft.github.io][RAFT]] consensus protocol. This setup ensures that we can lose up to one less than half of the agents and still have a functioning and consistent agency.
+* RebootID
 
-  Entities within the Agency are accessed through paths; some important paths are
-  
-** Important Agency Paths
-  - arango/Plan
-  - arango/Current
-
-* Database
-  A database is an entity together with a number of "system collections"
-
-* Database Creation (Single Server)
-  TBD
-  
 * Database Creation (Cluster)
-  Database creation (on Cluster Level) is performed by a coordinator on behalf of a user.
+  Database creation in a cluster is performed by a coordinator on behalf of a user.
 
-  Database creation proceeds in multiple steps and is atomic in the sense that a database is only visible to "users" (beyond a coordinator) when it has been fully created, including all system collections and their indices.
+  Database creation proceeds in multiple steps, is atomic in the sense that a database is only visible to "users" (beyond a coordinator) when it has been fully created (i.e. *all* steps have been successful), including creation of all system collections and their indices.
+  There is a mechanism in place that can clean up partially created databases if the coordinator in charge of creating a database crashes in the process of creating it.
   
-  - create a database entry in Plan with a flag `isBuilding: true`,
-    (this triggers creation of database entities on DBServers)
-  - wait for DBServers to report successful creation of DBServer-databases
-  - create all system collections, and their indices, on the newly created databases, and wait for success to be reported. this is done using an Upgrade process.
-  - remove the `isBuilding: true` flag.
-  - *only if* all of the above are successful, the database has been successfully created. If there has been a problem, as much as possible of the creation is rolled back; remainders are cleaned up by a maintenance process.
+  The follwoing steps are performed to create a database with name ~$name~.
+  - write a database entry in ~arangod/Plan/Databases/$name~ , which is a json object of the form
+#+BEGIN-SRC
+{ 
+"isBuilding": true,
+"id": 123,
+"name": $name
+"coordinator": $UUID-OF-COORDINATOR,
+"coordinatorRebootId": $REBOOTID-OF-COORDINATOR
+}
+#+END-SRC
+    This triggers creation of database entities on DBServers
+  - Wait for all DBServers to report successful creation of DBServer level databases (by observing that all known DBServers confirm in ~Current~ that they have a database of this name
+  - Create all system collections, and their indices, on the newly created databases. Wait for success to be reported, this is done using an Upgrade process.
+  - Overwrite the entry at ~arangodb/Plan/Databases/$name~ with the entry above *without* the ~isBuilding: true~ flag.
+ 
+*Only if* all of the above steps are performed successfully, the database has been created and becomes visible to other users. If there was a problem, as much as possible of the creation is rolled back; remainders are cleaned up by a maintenance process. In particular if the Coordinator that is in charge of creating the database crashes, any partial entries are removed. The Maintenance Job uses Server Heartbeats and ~RebootID~s to determine whether a Coordinator has crashed.
     
 * Collection Creation (Cluster)
   
-  - create an entry in Plan for the collection, `isBuilding: true`
-  - wait for creation of all shards to succeed (what about followers?)
-  - remove isBuilding
+Collection creation in a cluster is performed by a coordinator on behalf of a user.
+
+Collection creation (as Database creation) proceeds in steps, and a collection is only successfully created once all steps have been performed successfully.
+  
+  - Write an an entry in ~arangodb/Plan/Collctions~ for the collection which contains a flag ~isBuilding: true~
+  - Wait for creation of all shards (so the collections on the DBServers) to succeed (what about followers?)
+  - Create Indexes
+  - Overwrite the entry in ~arangodb/Plan/Collections~ with an entry without the flag ~isBuilding: true~
     
     Important considerations: Does the database disappear during creation?; it is entirely possible for the database to get dropped while collection creation is in progress.
     
