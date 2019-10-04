@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2019-10-04 Fri 16:01 -->
+<!-- 2019-10-04 Fri 17:53 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Description of core concepts of ArangoDB</title>
@@ -246,41 +246,41 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org22c2613">1. Vocabulary</a>
+<li><a href="#org4600592">1. Vocabulary</a>
 <ul>
-<li><a href="#orga033714">1.1. Document</a></li>
-<li><a href="#org38a53ad">1.2. Collection</a></li>
-<li><a href="#org4abfb2d">1.3. Database</a>
+<li><a href="#org8db1804">1.1. Document</a></li>
+<li><a href="#org768d2b0">1.2. Collection</a></li>
+<li><a href="#orgc17cdb7">1.3. Index</a></li>
+<li><a href="#org7a4d918">1.4. Database</a>
 <ul>
-<li><a href="#org0737153">1.3.1. System collections</a></li>
+<li><a href="#org4b4f4f3">1.4.1. System collections</a></li>
 </ul>
 </li>
-<li><a href="#org5f8e078">1.4. Cluster</a>
+<li><a href="#org193eb52">1.5. Single Server</a></li>
+<li><a href="#org2e6f4b7">1.6. Cluster</a>
 <ul>
-<li><a href="#org7c1ba0e">1.4.1. Important Agency Paths</a></li>
+<li><a href="#org20fa402">1.6.1. Agency</a></li>
+<li><a href="#org8d4156e">1.6.2. Coordinator</a></li>
+<li><a href="#org2c90fd4">1.6.3. DBServer</a></li>
 </ul>
 </li>
-<li><a href="#org700327e">1.5. Entities (Databases, Collections, Documents) can exist on different levels in ArangoDB:</a></li>
 </ul>
 </li>
-<li><a href="#org167f90a">2. Agency</a></li>
-<li><a href="#org45f8e1d">3. Coordinator</a></li>
-<li><a href="#org990e635">4. DBServers</a></li>
-<li><a href="#orgf53d70b">5. Database</a></li>
-<li><a href="#org9056af6">6. Database Creation (Single Server)</a></li>
-<li><a href="#orgb8fafcc">7. Database Creation (Cluster)</a></li>
-<li><a href="#org71618c3">8. Collection Creation (Cluster)</a></li>
-<li><a href="#org8cdea4d">9. Index Creation (Cluster)</a></li>
+<li><a href="#orgf5bd642">2. Cluster</a></li>
+<li><a href="#orgd00f0c4">3. RebootID</a></li>
+<li><a href="#orgd5dc7b9">4. Database Creation (Cluster)</a></li>
+<li><a href="#org37497dd">5. Collection Creation (Cluster)</a></li>
+<li><a href="#org6488237">6. Index Creation (Cluster)</a></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org22c2613" class="outline-2">
-<h2 id="org22c2613"><span class="section-number-2">1</span> Vocabulary</h2>
+<div id="outline-container-org4600592" class="outline-2">
+<h2 id="org4600592"><span class="section-number-2">1</span> Vocabulary</h2>
 <div class="outline-text-2" id="text-1">
 </div>
-<div id="outline-container-orga033714" class="outline-3">
-<h3 id="orga033714"><span class="section-number-3">1.1</span> Document</h3>
+<div id="outline-container-org8db1804" class="outline-3">
+<h3 id="org8db1804"><span class="section-number-3">1.1</span> Document</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
 A json object.
@@ -288,8 +288,8 @@ A json object.
 </div>
 </div>
 
-<div id="outline-container-org38a53ad" class="outline-3">
-<h3 id="org38a53ad"><span class="section-number-3">1.2</span> Collection</h3>
+<div id="outline-container-org768d2b0" class="outline-3">
+<h3 id="org768d2b0"><span class="section-number-3">1.2</span> Collection</h3>
 <div class="outline-text-3" id="text-1-2">
 <p>
 A collection of documents. Can have indexes.
@@ -297,9 +297,18 @@ A collection of documents. Can have indexes.
 </div>
 </div>
 
-<div id="outline-container-org4abfb2d" class="outline-3">
-<h3 id="org4abfb2d"><span class="section-number-3">1.3</span> Database</h3>
+<div id="outline-container-orgc17cdb7" class="outline-3">
+<h3 id="orgc17cdb7"><span class="section-number-3">1.3</span> Index</h3>
 <div class="outline-text-3" id="text-1-3">
+<p>
+TBD
+</p>
+</div>
+</div>
+
+<div id="outline-container-org7a4d918" class="outline-3">
+<h3 id="org7a4d918"><span class="section-number-3">1.4</span> Database</h3>
+<div class="outline-text-3" id="text-1-4">
 <p>
 A database is a collection of collections (yes).
 </p>
@@ -309,9 +318,9 @@ A database contains some collections which are system collections. System collec
 </p>
 </div>
 
-<div id="outline-container-org0737153" class="outline-4">
-<h4 id="org0737153"><span class="section-number-4">1.3.1</span> System collections</h4>
-<div class="outline-text-4" id="text-1-3-1">
+<div id="outline-container-org4b4f4f3" class="outline-4">
+<h4 id="org4b4f4f3"><span class="section-number-4">1.4.1</span> System collections</h4>
+<div class="outline-text-4" id="text-1-4-1">
 <p>
 The following system collections are created on database creation at the time of this writing.
 </p>
@@ -325,12 +334,22 @@ The following system collections are created on database creation at the time of
 </div>
 </div>
 
-<div id="outline-container-org5f8e078" class="outline-3">
-<h3 id="org5f8e078"><span class="section-number-3">1.4</span> Cluster</h3>
-<div class="outline-text-3" id="text-1-4">
-<ul class="org-ul">
-<li>Agency</li>
-</ul>
+<div id="outline-container-org193eb52" class="outline-3">
+<h3 id="org193eb52"><span class="section-number-3">1.5</span> Single Server</h3>
+<div class="outline-text-3" id="text-1-5">
+<p>
+In Single Server mode ArangoDB runs as a single (multi-threaded) process.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org2e6f4b7" class="outline-3">
+<h3 id="org2e6f4b7"><span class="section-number-3">1.6</span> Cluster</h3>
+<div class="outline-text-3" id="text-1-6">
+</div>
+<div id="outline-container-org20fa402" class="outline-4">
+<h4 id="org20fa402"><span class="section-number-4">1.6.1</span> Agency</h4>
+<div class="outline-text-4" id="text-1-6-1">
 <p>
 The <i>agency</i> in an ArangoDB cluster is a collection of an odd number of <i>agents</i> forming a consensus-based resilient store of a JSON document (sometimes also referred to as "the agency").
 An ArangoDB agency uses the <a href="https://raft.github.io">RAFT</a> consensus protocol. This setup ensures that we can lose up to one less than half of the agents and still have a functioning and consistent agency.
@@ -341,114 +360,132 @@ Entities within the Agency are accessed through paths; some important paths are
 </p>
 </div>
 
-<div id="outline-container-org7c1ba0e" class="outline-4">
-<h4 id="org7c1ba0e"><span class="section-number-4">1.4.1</span> Important Agency Paths</h4>
-<div class="outline-text-4" id="text-1-4-1">
+<ol class="org-ol">
+<li><a id="org284468d"></a>Important Agency Paths<br />
+<div class="outline-text-5" id="text-1-6-1-1">
 <ul class="org-ul">
-<li>arango/Plan</li>
-<li>arango/Current</li>
-</ul>
-
-
-<ul class="org-ul">
-<li>Coordinator</li>
-<li>DBServer</li>
+<li><code>arango/Plan</code> contains the <i>intended state</i> of the cluster; Coordinators write to these paths to request creation or updates of entities.</li>
+<li><code>arango/Current</code> contains the <i>current state</i> of the clusterl; DBServers write here to reflect their current state.</li>
 </ul>
 </div>
-</div>
+</li>
+</ol>
 </div>
 
-<div id="outline-container-org700327e" class="outline-3">
-<h3 id="org700327e"><span class="section-number-3">1.5</span> Entities (Databases, Collections, Documents) can exist on different levels in ArangoDB:</h3>
-<div class="outline-text-3" id="text-1-5">
-<ul class="org-ul">
-<li>Server Level</li>
-<li>Cluster Level</li>
-</ul>
-
+<div id="outline-container-org8d4156e" class="outline-4">
+<h4 id="org8d4156e"><span class="section-number-4">1.6.2</span> Coordinator</h4>
+<div class="outline-text-4" id="text-1-6-2">
 <p>
-(look up whether databases can exist on DBServer level, but not be Cluster level DBs?)
+A coordinator (of which there can be as many configured as required) is the gateway between client applications and the agency. It coordinates creation of databases, collections, and indices, queries, etc.
 </p>
+</div>
+</div>
 
+<div id="outline-container-org2c90fd4" class="outline-4">
+<h4 id="org2c90fd4"><span class="section-number-4">1.6.3</span> DBServer</h4>
+<div class="outline-text-4" id="text-1-6-3">
 <p>
-and their visibility varies on Coordinator, DBServer, Agency
-</p>
-
-<ul class="org-ul">
-<li>Something that exists on DBServer level does not need to exist on Cluster Level, Agency is completely different</li>
-
-<li>A <b>database</b> that exists on Cluster level is backed by exactly one database on <b>each</b> DBserver (what happens if we add a DBServer?)</li>
-<li>A <b>collection</b> that exists on Cluster level is backed by a number of <b>shards</b> which are "ordinary" collections on the DBServer level</li>
-<li><b>index</b> exists for shard on every server ?</li>
-</ul>
-
-<p>
-As an example the <code>_statistics</code> collection exists in the cluster as a collection (backed by shards on DBServers) and as a collection on each <code>DBServer</code> 
+A DBServer in a cluster is responsible for storing data. Its role in the cluster is controlled by reading <code>arango/Plan</code> (THE PLAN) from the agency. Coordinators contact DBServers when executing queries.
 </p>
 </div>
 </div>
 </div>
-
-<div id="outline-container-org167f90a" class="outline-2">
-<h2 id="org167f90a"><span class="section-number-2">2</span> Agency</h2>
 </div>
 
-<div id="outline-container-org45f8e1d" class="outline-2">
-<h2 id="org45f8e1d"><span class="section-number-2">3</span> Coordinator</h2>
+
+
+
+<div id="outline-container-orgf5bd642" class="outline-2">
+<h2 id="orgf5bd642"><span class="section-number-2">2</span> Cluster</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+Entities such as Databases, Collections, Documents exist on different levels in an ArangoDB Cluster, namely at <code>Server Level</code>, and at
+<code>Cluster Level</code>.
+</p>
+
+<p>
+(TODO: look up whether databases can exist on DBServer level, but not be Cluster level DBs, and their visibility varies on Coordinator, DBServer, Agency)
+</p>
+
+<p>
+An entity that exists at <code>DBServer</code> level does not need to exist at Cluster Level. Note that the Agency is completely separate, even if it runs as an ArangoDB process.
+</p>
+
+<ul class="org-ul">
+<li>A <b>database</b> at cluster level is backed by exactly one database on <b>each</b> DBserver.</li>
+<li>A <b>collection</b> at cluster level is backed by a number of <b>shards</b> on DBServers, which are "ordinary" collections at DBServer level</li>
+<li>(TODO: How do indices behave?) An <b>index</b> exists for shard on every server</li>
+</ul>
+
+<p>
+As an example the <code>_statistics</code> collection exists in a cluster as a collection (backed by shards on DBServers) and as a collection on each <code>DBServer</code>. These have nothing to do with each other. The cluster level collection collects cluster statistics, the DBServer level collection collects statistics for this particular DBServer.
+</p>
+</div>
 </div>
 
-<div id="outline-container-org990e635" class="outline-2">
-<h2 id="org990e635"><span class="section-number-2">4</span> DBServers</h2>
+<div id="outline-container-orgd00f0c4" class="outline-2">
+<h2 id="orgd00f0c4"><span class="section-number-2">3</span> RebootID</h2>
 </div>
 
-<div id="outline-container-orgf53d70b" class="outline-2">
-<h2 id="orgf53d70b"><span class="section-number-2">5</span> Database</h2>
+<div id="outline-container-orgd5dc7b9" class="outline-2">
+<h2 id="orgd5dc7b9"><span class="section-number-2">4</span> Database Creation (Cluster)</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+Database creation in a cluster is performed by a coordinator on behalf of a user.
+</p>
+
+<p>
+Database creation proceeds in multiple steps, is atomic in the sense that a database is only visible to "users" (beyond a coordinator) when it has been fully created (i.e. <b>all</b> steps have been successful), including creation of all system collections and their indices.
+There is a mechanism in place that can clean up partially created databases if the coordinator in charge of creating a database crashes in the process of creating it.
+</p>
+
+<p>
+The follwoing steps are performed to create a database with name <code>$name</code>.
+</p>
+<ul class="org-ul">
+<li>write a database entry in <code>arangod/Plan/Databases/$name</code> , which is a json object of the form</li>
+</ul>
+<p>
+#+BEGIN-SRC
+{ 
+"isBuilding": true,
+"id": 123,
+"name": $name
+"coordinator": $UUID-OF-COORDINATOR,
+"coordinatorRebootId": $REBOOTID-OF-COORDINATOR
+}
+#+END-SRC
+    This triggers creation of database entities on DBServers
+</p>
+<ul class="org-ul">
+<li>Wait for all DBServers to report successful creation of DBServer level databases (by observing that all known DBServers confirm in <code>Current</code> that they have a database of this name</li>
+<li>Create all system collections, and their indices, on the newly created databases. Wait for success to be reported, this is done using an Upgrade process.</li>
+<li>Overwrite the entry at <code>arangodb/Plan/Databases/$name</code> with the entry above <b>without</b> the <code>isBuilding: true</code> flag.</li>
+</ul>
+
+<p>
+<b>Only if</b> all of the above steps are performed successfully, the database has been created and becomes visible to other users. If there was a problem, as much as possible of the creation is rolled back; remainders are cleaned up by a maintenance process. In particular if the Coordinator that is in charge of creating the database crashes, any partial entries are removed. The Maintenance Job uses Server Heartbeats and ~RebootID~s to determine whether a Coordinator has crashed.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org37497dd" class="outline-2">
+<h2 id="org37497dd"><span class="section-number-2">5</span> Collection Creation (Cluster)</h2>
 <div class="outline-text-2" id="text-5">
 <p>
-A database is an entity together with a number of "system collections"
-</p>
-</div>
-</div>
-
-<div id="outline-container-org9056af6" class="outline-2">
-<h2 id="org9056af6"><span class="section-number-2">6</span> Database Creation (Single Server)</h2>
-<div class="outline-text-2" id="text-6">
-<p>
-If a database is created on a single server it is backed by storage in the filesystem of the host. Databases on a DBServer in a cluster are just databases like on a single server.
-</p>
-</div>
-</div>
-
-<div id="outline-container-orgb8fafcc" class="outline-2">
-<h2 id="orgb8fafcc"><span class="section-number-2">7</span> Database Creation (Cluster)</h2>
-<div class="outline-text-2" id="text-7">
-<p>
-Database creation (on Cluster Level) is performed by a coordinator on behalf of a user.
+Collection creation in a cluster is performed by a coordinator on behalf of a user.
 </p>
 
 <p>
-Database creation proceeds in multiple steps and is atomic in the sense that a database is only visible to "users" (beyond a coordinator) when it has been fully created, including all system collections and their indices.
+Collection creation (as Database creation) proceeds in steps, and a collection is only successfully created once all steps have been performed successfully.
 </p>
 
 <ul class="org-ul">
-<li>create a database entry in Plan with a flag `isBuilding: true`,
-(this triggers creation of database entities on DBServers)</li>
-<li>wait for DBServers to report successful creation of DBServer-databases</li>
-<li>create all system collections, and their indices, on the newly created databases, and wait for success to be reported. this is done using an Upgrade process.</li>
-<li>remove the `isBuilding: true` flag.</li>
-<li><b>only if</b> all of the above are successful, the database has been successfully created. If there has been a problem, as much as possible of the creation is rolled back; remainders are cleaned up by a maintenance process.</li>
-</ul>
-</div>
-</div>
-
-<div id="outline-container-org71618c3" class="outline-2">
-<h2 id="org71618c3"><span class="section-number-2">8</span> Collection Creation (Cluster)</h2>
-<div class="outline-text-2" id="text-8">
-<ul class="org-ul">
-<li>create an entry in Plan for the collection, `isBuilding: true`</li>
-<li>wait for creation of all shards to succeed (what about followers?)</li>
+<li>Write an an entry in <code>arangodb/Plan/Collctions</code> for the collection which contains a flag <code>isBuilding: true</code></li>
+<li>Wait for creation of all shards (so the collections on the DBServers) to succeed (what about followers?)</li>
+<li>Create Indexes</li>
 <li><p>
-remove isBuilding
+Overwrite the entry in <code>arangodb/Plan/Collections</code> with an entry without the flag <code>isBuilding: true</code>
 </p>
 
 <p>
@@ -462,9 +499,9 @@ Collections can be created in "bulk" which complicates the process.
 </div>
 </div>
 
-<div id="outline-container-org8cdea4d" class="outline-2">
-<h2 id="org8cdea4d"><span class="section-number-2">9</span> Index Creation (Cluster)</h2>
-<div class="outline-text-2" id="text-9">
+<div id="outline-container-org6488237" class="outline-2">
+<h2 id="org6488237"><span class="section-number-2">6</span> Index Creation (Cluster)</h2>
+<div class="outline-text-2" id="text-6">
 <p>
 Foreground/Background
 </p>
@@ -477,7 +514,7 @@ Foreground/Background
 </div>
 </div>
 <div id="postamble" class="status">
-<p class="date">Created: 2019-10-04 Fri 16:01</p>
+<p class="date">Created: 2019-10-04 Fri 17:53</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
