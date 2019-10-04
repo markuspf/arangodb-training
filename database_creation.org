@@ -1,0 +1,88 @@
+#+TITLE: ArangoDB stuff
+
+* Vocabulary
+** Document
+  A json object.
+
+** Collection
+  A collection of documents. Can have indexes.
+
+** Database
+  A database is a collection of collections (yes).
+  
+  A database contains some collections which are system collections. System collections' names start with a ~_~, also there is a special database called ~_system~ which contains system information such as the collection ~_users~.
+  
+*** System collections
+
+    The following system collections are created on database creation at the time of this writing.
+
+    - ~_graphs~
+    - ~_analyzers~
+    - ~_statistics~
+      
+** Cluster
+   - Agency
+   - Coordinator
+   - DBServer
+
+** Entities (Databases, Collections, Documents) can exist on different levels in ArangoDB:
+   - Server Level
+   - Cluster Level
+   
+(look up whether databases can exist on DBServer level, but not be Cluster level DBs?)
+
+and their visibility varies on Coordinator, DBServer, Agency
+
+ - Something that exists on DBServer level does not need to exist on Cluster Level, Agency is completely different
+ 
+ - A *database* that exists on Cluster level is backed by exactly one database on *each* DBserver (what happens if we add a DBServer?)
+ - A *collection* that exists on Cluster level is backed by a number of shards which are represented by "ordinary" collections on the DBServer level
+ - *index* exists for shard on every server ?
+   
+As an example the `_statistics` collection exists in the cluster as a collection (backed by shards on DBServers) and as a collection on each `DBServer` 
+
+(TODO: Coordinator _statistics?)
+
+* Agency
+  The /agency/ in an ArangoDB cluster is a collection of an odd number of /agents/ forming a consensus-based resilient store of a JSON document (sometimes also referred to as "the agency").
+  An ArangoDB agency uses the [[https://raft.github.io][RAFT]] consensus protocol. This setup ensures that we can lose up to one less than half of the agents and still have a functioning and consistent agency.
+
+  Entities within the Agency are accessed through paths; some important paths are
+  
+** Important Agency Paths
+  - arango/Plan
+  - arango/Current
+
+* Database
+  A database is an entity together with a number of "system collections"
+
+* Database Creation (Single Server)
+  TBD
+  
+* Database Creation (Cluster)
+  Database creation (on Cluster Level) is performed by a coordinator on behalf of a user.
+
+  Database creation proceeds in multiple steps and is atomic in the sense that a database is only visible to "users" (beyond a coordinator) when it has been fully created, including all system collections and their indices.
+  
+  - create a database entry in Plan with a flag `isBuilding: true`,
+    (this triggers creation of database entities on DBServers)
+  - wait for DBServers to report successful creation of DBServer-databases
+  - create all system collections, and their indices, on the newly created databases, and wait for success to be reported. this is done using an Upgrade process.
+  - remove the `isBuilding: true` flag.
+  - *only if* all of the above are successful, the database has been successfully created. If there has been a problem, as much as possible of the creation is rolled back; remainders are cleaned up by a maintenance process.
+    
+* Collection Creation (Cluster)
+  
+  - create an entry in Plan for the collection, `isBuilding: true`
+  - wait for creation of all shards to succeed (what about followers?)
+  - remove isBuilding
+    
+    Important considerations: Does the database disappear during creation?; it is entirely possible for the database to get dropped while collection creation is in progress.
+    
+    Collections can be created in "bulk" which complicates the process.
+
+* Index Creation (Cluster)
+  Foreground/Background
+
+  * Did the DB disappear?
+  * Did the Collection disappear?
