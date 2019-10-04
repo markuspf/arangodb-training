@@ -1,4 +1,4 @@
-#+TITLE: ArangoDB stuff
+#+TITLE: Description of core concepts of ArangoDB
 
 * Vocabulary
 ** Document
@@ -36,12 +36,10 @@ and their visibility varies on Coordinator, DBServer, Agency
  - Something that exists on DBServer level does not need to exist on Cluster Level, Agency is completely different
  
  - A *database* that exists on Cluster level is backed by exactly one database on *each* DBserver (what happens if we add a DBServer?)
- - A *collection* that exists on Cluster level is backed by a number of shards which are represented by "ordinary" collections on the DBServer level
+ - A *collection* that exists on Cluster level is backed by a number of *shards* which are "ordinary" collections on the DBServer level
  - *index* exists for shard on every server ?
    
-As an example the `_statistics` collection exists in the cluster as a collection (backed by shards on DBServers) and as a collection on each `DBServer` 
-
-(TODO: Coordinator _statistics?)
+As an example the ~_statistics~ collection exists in the cluster as a collection (backed by shards on DBServers) and as a collection on each ~DBServer~ 
 
 * Agency
   The /agency/ in an ArangoDB cluster is a collection of an odd number of /agents/ forming a consensus-based resilient store of a JSON document (sometimes also referred to as "the agency").
